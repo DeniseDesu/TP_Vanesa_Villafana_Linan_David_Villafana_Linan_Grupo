@@ -52,8 +52,18 @@ export function CartProvider({ children }) {
     }
   };
 
+  const removeFromCartById = (id) => {
+    const actualizado = cart.filter(item => item.id !== id);
+    setCart(actualizado);
+    if (storageKey) {
+      localStorage.setItem(storageKey, JSON.stringify(actualizado));
+    }
+  };
+
   return (
-    <CartContext.Provider value={{ cart, addToCart, clearCart, toast, loading }}>
+    <CartContext.Provider
+      value={{ cart, addToCart, clearCart, toast, loading, removeFromCartById }}
+    >
       {children}
     </CartContext.Provider>
   );
