@@ -13,7 +13,6 @@ export function ProductsProvider({ children }) {
   useEffect(() => {
     cargarDesdeLocalStorage();
 
-    // Escuchar cambios de productos desde otros componentes
     const listener = () => cargarDesdeLocalStorage();
     window.addEventListener("productosActualizados", listener);
 
