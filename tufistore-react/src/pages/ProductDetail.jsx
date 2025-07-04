@@ -23,7 +23,7 @@ export default function ProductDetail() {
     addToCart(producto);
   };
 
-  // ✅ Normalizar ruta de imagen para evitar problemas como /img/img/...
+  // Normalizar ruta de imagen
   const imagenSrc = producto.imagen.replace(/^(\/?img\/)+/, "/img/");
 
   return (

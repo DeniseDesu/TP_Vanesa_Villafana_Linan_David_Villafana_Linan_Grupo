@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ContactForm } from "./ContactForm";
+import { useProducts } from "../context/ProductsContext";
 
 export default function Admin() {
   const navigate = useNavigate();
-  const [productos, setProductos] = useState([]);
+  const { productos, addProduct, deleteProduct, refreshProductos } = useProducts();
   const [usuarios, setUsuarios] = useState([]);
   const [imagenPreview, setImagenPreview] = useState(null);
   const [imagenNombre, setImagenNombre] = useState("");
@@ -18,14 +19,6 @@ export default function Admin() {
   }, [navigate]);
 
   useEffect(() => {
-    if (!localStorage.getItem("productos")) {
-      const iniciales = [
-        { id: 1, nombre: "Figurita Messi", precio: 100, stock: 10, imagen: "/img/figu_qatar_messi.jpg" },
-        { id: 2, nombre: "Figurita Paredes", precio: 50, stock: 124, imagen: "/img/figu_qatar_paredes.jpg" }
-      ];
-      localStorage.setItem("productos", JSON.stringify(iniciales));
-    }
-
     if (!localStorage.getItem("usuarios")) {
       const usuariosInit = [
         { id: 1, email: "admin@tufi.com", password: "admin123", rol: "admin" },
@@ -33,23 +26,18 @@ export default function Admin() {
       ];
       localStorage.setItem("usuarios", JSON.stringify(usuariosInit));
     }
-
-    setProductos(JSON.parse(localStorage.getItem("productos")));
     setUsuarios(JSON.parse(localStorage.getItem("usuarios")));
   }, []);
 
   const handleAgregarProducto = (e) => {
     e.preventDefault();
     const nuevo = {
-      id: Date.now(),
       nombre: e.target.nuevoNombre.value,
       precio: parseFloat(e.target.nuevoPrecio.value),
       stock: parseInt(e.target.nuevoStock.value),
       imagen: `/img/${imagenNombre}`
     };
-    const actualizados = [...productos, nuevo];
-    setProductos(actualizados);
-    localStorage.setItem("productos", JSON.stringify(actualizados));
+    addProduct(nuevo);
     e.target.reset();
     setImagenPreview(null);
     setImagenNombre("");
@@ -68,23 +56,22 @@ export default function Admin() {
   };
 
   const eliminarProducto = (id) => {
-    const actualizados = productos.filter(p => p.id !== id);
-    setProductos(actualizados);
-    localStorage.setItem("productos", JSON.stringify(actualizados));
+    deleteProduct(id);
   };
 
   const editarProducto = (id) => {
     const nuevoNombre = prompt("Nuevo nombre:");
     const nuevoPrecio = prompt("Nuevo precio:");
     const nuevoStock = prompt("Nuevo stock:");
+
     const copia = [...productos];
     const index = copia.findIndex(p => p.id === id);
     if (index !== -1) {
       copia[index].nombre = nuevoNombre;
       copia[index].precio = parseFloat(nuevoPrecio);
       copia[index].stock = parseInt(nuevoStock);
-      setProductos(copia);
       localStorage.setItem("productos", JSON.stringify(copia));
+      refreshProductos();
     }
   };
 

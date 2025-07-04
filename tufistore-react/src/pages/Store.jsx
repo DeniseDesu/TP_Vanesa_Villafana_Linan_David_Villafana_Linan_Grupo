@@ -6,7 +6,7 @@ import { ContactForm } from "./ContactForm";
 
 export default function Store() {
   const { productos } = useProducts();
-  const { addToCart, toast, loading } = useCart(); // ✅ agregamos loading
+  const { addToCart, toast, loading } = useCart();
   const [busqueda, setBusqueda] = useState("");
   const [precioMax, setPrecioMax] = useState("");
   const [orden, setOrden] = useState("");
@@ -37,7 +37,7 @@ export default function Store() {
     return ruta?.startsWith("/img/") ? ruta : `/img/${ruta.replace(/^\/+/, '')}`;
   };
 
-  if (loading) return null; // ✅ evita render mientras se carga el carrito
+  if (loading) return null;
 
   return (
     <>
