@@ -20,6 +20,10 @@ export function AuthProvider({ children }) {
   };
 
   const logout = () => {
+    const userData = JSON.parse(localStorage.getItem("userData"));
+    if (userData?.email) {
+      localStorage.removeItem(`carrito_${userData.email}`);
+    }
     localStorage.removeItem("userData");
     setUser(null);
   };

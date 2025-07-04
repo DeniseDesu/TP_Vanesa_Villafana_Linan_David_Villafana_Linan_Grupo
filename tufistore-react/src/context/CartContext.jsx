@@ -1,24 +1,35 @@
 import { createContext, useContext, useEffect, useState, useRef } from "react";
+import { useAuth } from "./AuthContext";
 
 const CartContext = createContext();
 
 export function CartProvider({ children }) {
+  const { user } = useAuth();
   const [cart, setCart] = useState([]);
   const [toast, setToast] = useState(null);
-  const [loading, setLoading] = useState(true); // nuevo estado
+  const [loading, setLoading] = useState(true);
   const toastTimeout = useRef(null);
 
-  useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("carrito")) || [];
-    setCart(stored);
-    setLoading(false); // marcar como cargado
-  }, []);
+  const email = user?.email;
+  const storageKey = email ? `carrito_${email}` : null;
 
+  // Cargar carrito cuando cambia el usuario
   useEffect(() => {
-    if (!loading) {
-      localStorage.setItem("carrito", JSON.stringify(cart));
+    if (storageKey) {
+      const stored = JSON.parse(localStorage.getItem(storageKey)) || [];
+      setCart(stored);
+    } else {
+      setCart([]); // si no hay usuario, vacía el estado
     }
-  }, [cart, loading]);
+    setLoading(false);
+  }, [storageKey]);
+
+  // Guardar carrito por usuario
+  useEffect(() => {
+    if (!loading && storageKey) {
+      localStorage.setItem(storageKey, JSON.stringify(cart));
+    }
+  }, [cart, loading, storageKey]);
 
   const addToCart = (product) => {
     const updated = [...cart];
@@ -36,6 +47,9 @@ export function CartProvider({ children }) {
 
   const clearCart = () => {
     setCart([]);
+    if (storageKey) {
+      localStorage.removeItem(storageKey);
+    }
   };
 
   return (
