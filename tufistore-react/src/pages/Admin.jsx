@@ -1,4 +1,3 @@
-// ... imports sin cambios
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ContactForm } from "./ContactForm";
@@ -11,8 +10,8 @@ export default function Admin() {
   const [imagenNombre, setImagenNombre] = useState("");
 
   useEffect(() => {
-    const role = localStorage.getItem("userRole");
-    if (role !== "admin") {
+    const userData = JSON.parse(localStorage.getItem("userData"));
+    if (!userData || userData.rol !== "admin") {
       alert("Acceso denegado. Solo para administradores.");
       navigate("/login");
     }
@@ -151,7 +150,6 @@ export default function Admin() {
             <input className="form-control mb-2" type="text" name="nuevoNombre" placeholder="Nombre" required />
             <input className="form-control mb-2" type="number" name="nuevoPrecio" placeholder="Precio" required />
             <input className="form-control mb-2" type="number" name="nuevoStock" placeholder="Stock" required />
-
             <input className="form-control mb-2" type="file" name="nuevaImagen" onChange={handleImagenChange} accept="image/*" required />
             {imagenPreview && (
               <div className="mb-3">
@@ -159,7 +157,6 @@ export default function Admin() {
                 <img src={imagenPreview} alt="Vista previa" className="img-abm" />
               </div>
             )}
-
             <button className="btn btn-success">Agregar</button>
           </form>
 
